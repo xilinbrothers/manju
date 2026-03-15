@@ -34,7 +34,7 @@ app.get('/api/series', (req, res) => {
   res.json([
     {
       id: 'series_001',
-      title: '绝世医仙',
+      title: '绝世医仙 来自后端',
       description: '身怀绝技的神医，游走于都市之间，妙手回春的同时揭开惊天阴谋。',
       cover: 'https://images.unsplash.com/photo-1541562232579-512a21360020?auto=format&fit=crop&q=80&w=640&h=360',
       status: '连载中',
