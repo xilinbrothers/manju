@@ -1,0 +1,19 @@
+{
+  "name": "manju-bot-backend",
+  "version": "1.0.0",
+  "description": "Telegram Bot Backend for Manju Subscription",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.5",
+    "express": "^5.2.1",
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
