@@ -31,10 +31,42 @@ const telegramAuth = (req, res, next) => {
 
 // 示例 API: 获取剧集 (受保护)
 app.get('/api/series', (req, res) => {
-  // 这里可以从数据库获取
   res.json([
-    { id: 'series_001', title: '重生之我是大魔王', cover: '...', status: '连载中' }
+    {
+      id: 'series_001',
+      title: '绝世医仙',
+      description: '身怀绝技的神医，游走于都市之间，妙手回春的同时揭开惊天阴谋。',
+      cover: 'https://images.unsplash.com/photo-1541562232579-512a21360020?auto=format&fit=crop&q=80&w=640&h=360',
+      status: '连载中',
+      total: 45,
+      category: '都市情感'
+    },
+    {
+      id: 'series_002',
+      title: '霸道总裁的替身娇妻',
+      description: '一场意外的替身契约，开启了一段爱恨纠葛的豪门绝恋...',
+      cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=640&h=360',
+      status: '已完结',
+      total: 12,
+      category: '商战权谋'
+    }
   ]);
+});
+
+app.get('/api/plans', (req, res) => {
+  const seriesId = req.query.series_id;
+  const basePlans = [
+    { id: '30days', label: '30天', price: '29.9', daily: '1.0', enabled: true },
+    { id: '90days', label: '90天', price: '69.9', daily: '0.78', save: '21', popular: true, enabled: true },
+    { id: '365days', label: '365天', price: '199.9', daily: '0.55', save: '159', enabled: true },
+    { id: '15days', label: '15天 (临近完结)', price: '19.9', daily: '1.33', note: '暂不可选', enabled: false }
+  ];
+
+  if (seriesId === 'series_002') {
+    return res.json(basePlans.map((p) => (p.id === '365days' ? { ...p, enabled: false, note: '暂不可选' } : p)));
+  }
+
+  return res.json(basePlans);
 });
 
 // 示例 API: 创建订单 (受保护)
