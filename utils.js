@@ -29,4 +29,19 @@ function verifyTelegramWebAppData(initData, botToken) {
   return computedHash === hash;
 }
 
-module.exports = { verifyTelegramWebAppData };
+function parseTelegramInitData(initData) {
+  try {
+    const params = new URLSearchParams(initData);
+    const userRaw = params.get('user');
+    const user = userRaw ? JSON.parse(userRaw) : null;
+    return {
+      query_id: params.get('query_id') || null,
+      auth_date: params.get('auth_date') ? Number(params.get('auth_date')) : null,
+      user,
+    };
+  } catch {
+    return { query_id: null, auth_date: null, user: null };
+  }
+}
+
+module.exports = { verifyTelegramWebAppData, parseTelegramInitData };

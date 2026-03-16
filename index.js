@@ -2,7 +2,7 @@ require('dotenv').config();
 const { Telegraf, Markup } = require('telegraf');
 const express = require('express');
 const cors = require('cors');
-const { verifyTelegramWebAppData } = require('./utils');
+const { verifyTelegramWebAppData, parseTelegramInitData } = require('./utils');
 
 // 检查必要的环境变量
 if (!process.env.BOT_TOKEN) {
@@ -26,6 +26,7 @@ const telegramAuth = (req, res, next) => {
   if (!initData || !verifyTelegramWebAppData(initData, process.env.BOT_TOKEN)) {
     return res.status(401).json({ error: '无效的身份验证数据 (Unauthorized)' });
   }
+  req.tg = parseTelegramInitData(initData);
   next();
 };
 
@@ -67,6 +68,47 @@ app.get('/api/plans', (req, res) => {
   }
 
   return res.json(basePlans);
+});
+
+app.get('/api/user/subscriptions', (req, res) => {
+  const initData = req.headers['x-telegram-init-data'];
+  if (initData) {
+    if (!verifyTelegramWebAppData(initData, process.env.BOT_TOKEN)) {
+      return res.status(401).json({ error: '无效的身份验证数据 (Unauthorized)' });
+    }
+    const tg = parseTelegramInitData(initData);
+    const uid = tg?.user?.id ? String(tg.user.id) : 'unknown';
+
+    const activeSubs = [
+      {
+        id: `sub_${uid}_1`,
+        title: '霸道总裁的替身娇妻',
+        plan: '90天套餐',
+        remainingDays: 67,
+        progress: 74,
+        status: 'active',
+        cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=640&h=360',
+        groupLink: 'https://t.me/your_support_username'
+      }
+    ];
+
+    const expiredSubs = [
+      {
+        id: `sub_${uid}_2`,
+        title: '重生之巅峰崛起',
+        expireDate: '2026年2月14日',
+        cover: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&q=80&w=640&h=360'
+      }
+    ];
+
+    return res.json({ activeSubs, expiredSubs, userId: uid });
+  }
+
+  return res.json({
+    activeSubs: [],
+    expiredSubs: [],
+    userId: 'dev'
+  });
 });
 
 // 示例 API: 创建订单 (受保护)
